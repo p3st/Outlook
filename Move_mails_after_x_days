@@ -1,0 +1,34 @@
+' av Finn Magnus Kverndalen 02.10.2013
+Sub Flytt_gamle_mailer()
+   Dim olns As Outlook.NameSpace
+   Dim oConItems As Outlook.Items
+   Dim iNumItems As Integer
+   Dim dDate As Date
+
+   Const Days = 90
+
+   Set objNS = Application.GetNamespace("MAPI")
+   MsgBox "Choose Folder"
+   Set oInboxItems = objNS.PickFolder.Items
+   
+   MsgBox "Move this to"
+   Set objTargetFolder = Outlook.Session.PickFolder
+   iNumItems = oInboxItems.Count
+
+   For i = iNumItems To 1 Step -1
+      Set objCurItem = oInboxItems.Item(i)
+      If TypeName(objCurItem) = "MailItem" Then
+         dDate = objCurItem.ReceivedTime
+         If DateDiff("d", dDate, Now) > Days Then
+            objCurItem.Move objTargetFolder
+         End If
+      End If
+   Next
+
+   MsgBox "Deleted"
+
+   Set objInboxItems = Nothing
+   Set objTargetFolder = Nothing
+   Set objNS = Nothing
+
+End Sub
